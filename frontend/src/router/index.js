@@ -22,6 +22,7 @@ const routes = [
       { path: 'books', name: 'BookList', component: () => import('@/views/book/BookList.vue'), meta: { title: '图书列表' } },
       { path: 'books/:id', name: 'BookDetail', component: () => import('@/views/book/BookDetail.vue'), meta: { title: '图书详情' } },
       { path: 'borrows', name: 'BorrowHistory', component: () => import('@/views/borrow/BorrowHistory.vue'), meta: { title: '我的借阅' } },
+      { path: 'fines', name: 'FineRecordList', component: () => import('@/views/borrow/FineRecordList.vue'), meta: { title: '我的罚金' } },
       { path: 'favorites', name: 'FavoriteList', component: () => import('@/views/favorite/FavoriteList.vue'), meta: { title: '我的收藏' } },
       { path: 'profile', name: 'Profile', component: () => import('@/views/Profile.vue'), meta: { title: '个人主页' } },
       // admin
@@ -32,6 +33,7 @@ const routes = [
       { path: 'admin/carousels', name: 'CarouselManage', component: () => import('@/views/admin/CarouselManage.vue'), meta: { title: '轮播图管理', requireAdmin: true } },
       { path: 'admin/announcements', name: 'AnnounceManage', component: () => import('@/views/admin/AnnounceManage.vue'), meta: { title: '公告管理', requireAdmin: true } },
       { path: 'admin/dashboard', name: 'Dashboard', component: () => import('@/views/admin/Dashboard.vue'), meta: { title: '数据仪表盘', requireAdmin: true } },
+      { path: 'admin/fines', name: 'FineManage', component: () => import('@/views/admin/FineManage.vue'), meta: { title: '罚金管理', requireAdmin: true } },
     ]
   },
   { path: '/:pathMatch(.*)*', redirect: '/home' }
@@ -54,7 +56,7 @@ router.beforeEach((to, from, next) => {
   if (!token) return next('/login')
   if (to.meta.requireAdmin && userInfo?.roleCode !== 'ROLE_ADMIN') return next('/home')
   // 学生页面：管理员不能访问（管理员直接跳转仪表盘）
-  const studentPages = ['/home', '/borrows', '/favorites']
+  const studentPages = ['/home', '/borrows', '/fines', '/favorites']
   if (userInfo?.roleCode === 'ROLE_ADMIN' && studentPages.some(p => to.path.startsWith(p))) {
     return next('/admin/dashboard')
   }

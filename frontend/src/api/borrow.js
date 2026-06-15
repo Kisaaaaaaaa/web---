@@ -21,3 +21,12 @@ export function getBorrowStats() {
 export function getTopBooks(limit = 10) {
   return request({ url: '/borrows/top', method: 'get', params: { limit } })
 }
+export function getStatsByCategory() {
+  return request({ url: '/borrows/stats/category', method: 'get' })
+}
+export function getDailyStats() {
+  return request({ url: '/borrows/stats/daily', method: 'get' })
+}
+export function getStatusDistribution() {
+  return request({ url: '/borrows/stats/distribution', method: 'get' })
+}

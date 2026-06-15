@@ -21,11 +21,12 @@
         <el-table-column prop="categoryName" label="分类" width="110" />
         <el-table-column label="库存" width="110"><template #default="{ row }">{{ row.currentStock }} / {{ row.totalStock }}</template></el-table-column>
         <el-table-column label="状态" width="90"><template #default="{ row }"><el-tag :type="row.status===1?'success':'info'" size="small">{{ row.status===1?'在架':'下架' }}</el-tag></template></el-table-column>
-        <el-table-column label="操作" width="160" fixed="right">
+        <el-table-column label="操作" width="230" fixed="right">
           <template #default="{ row }">
             <div class="action-btns">
               <el-button type="primary" size="small" @click.stop="openDialog(row)">编辑</el-button>
               <el-button :type="row.status===1?'warning':'success'" size="small" plain @click.stop="handleToggleStatus(row.id, row.status===1?0:1)">{{ row.status===1?'下架':'上架' }}</el-button>
+              <el-button type="danger" size="small" plain @click.stop="handleDelete(row.id)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -64,8 +65,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'; import { ElMessage } from 'element-plus'; import { Plus } from '@element-plus/icons-vue'
-import { getBookList, addBook, updateBook, updateBookStatus } from '@/api/book'; import { getAllCategories } from '@/api/category'; import { uploadFile } from '@/api/review'
+import { ref, reactive, onMounted } from 'vue'; import { ElMessage, ElMessageBox } from 'element-plus'; import { Plus } from '@element-plus/icons-vue'
+import { getBookList, addBook, updateBook, updateBookStatus, deleteBook } from '@/api/book'; import { getAllCategories } from '@/api/category'; import { uploadFile } from '@/api/review'
 
 const loading = ref(false), books = ref([]), total = ref(0), categories = ref([])
 const filter = reactive({ keyword: '', categoryId: null, status: null })
@@ -77,12 +78,24 @@ const rules = { isbn:[{required:true}], title:[{required:true}], author:[{requir
 
 onMounted(async () => { await loadCategories(); fetchBooks() })
 async function loadCategories() { try { categories.value = (await getAllCategories()).data } catch {} }
-async function fetchBooks() { loading.value = true; try { const p = { ...query, keyword: filter.keyword || undefined, categoryId: filter.categoryId, status: filter.status }; books.value = (await getBookList(Object.fromEntries(Object.entries(p).filter(([,v])=>v!=null&&v!=='')))).data.list; total.value = books.value.length } catch {} finally { loading.value = false } }
+async function fetchBooks() {
+  loading.value = true
+  try {
+    const params = { page: query.page, pageSize: query.pageSize }
+    if (filter.keyword) params.keyword = filter.keyword
+    if (filter.categoryId) params.categoryId = filter.categoryId
+    if (filter.status != null) params.status = filter.status
+    const r = await getBookList(params)
+    books.value = r.data.list
+    total.value = r.data.total
+  } catch {} finally { loading.value = false }
+}
 
 function openDialog(book) { editingBook.value = book; if (book) Object.assign(form, { isbn:book.isbn,title:book.title,author:book.author,publisher:book.publisher,categoryId:book.categoryId,totalStock:book.totalStock,publishDate:book.publishDate,coverUrl:book.coverUrl,description:book.description }); else Object.assign(form, { isbn:'',title:'',author:'',publisher:'',categoryId:null,totalStock:1,publishDate:null,coverUrl:'',description:'' }); dialogVisible.value = true }
 async function handleSave() { if (!await formRef.value.validate().catch(()=>false)) return; saving.value = true; try { if (editingBook.value?.id) { await updateBook(editingBook.value.id, form) } else { await addBook(form) }; ElMessage.success('保存成功'); dialogVisible.value = false; fetchBooks() } catch {} finally { saving.value = false } }
 async function onCoverChange(file) { try { form.coverUrl = (await uploadFile(file.raw)).data.url } catch {} }
 async function handleToggleStatus(id, status) { try { await updateBookStatus(id, status); ElMessage.success(status?'已上架':'已下架'); fetchBooks() } catch {} }
+async function handleDelete(id) { try { await ElMessageBox.confirm('确认删除该图书？', '删除', { type: 'warning' }); await deleteBook(id); ElMessage.success('已删除'); fetchBooks() } catch {} }
 </script>
 
 <style scoped>

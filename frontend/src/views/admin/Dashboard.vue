@@ -18,44 +18,53 @@
 
 <script setup>
 import { ref, reactive, onMounted, nextTick } from 'vue'; import * as echarts from 'echarts'
-import { getBorrowStats, getBorrowRecords } from '@/api/borrow'
+import { getBorrowStats, getStatsByCategory, getDailyStats, getStatusDistribution } from '@/api/borrow'
 
 const today = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })
 const stats = reactive({ borrowing: 0, returned: 0, overdue: 0, total: 0 })
 const c1 = ref(null), c2 = ref(null), c3 = ref(null), c4 = ref(null)
 
 onMounted(async () => {
-  let rawStats = {}
-  try { const r = await getBorrowStats(); rawStats = r.data; Object.assign(stats, { borrowing: rawStats.borrowing||0, returned: rawStats.returned||0, overdue: rawStats.overdue||0, total: rawStats.total||0 }) } catch {}
+  // 总览统计
+  try { const r = await getBorrowStats(); const d = r.data; Object.assign(stats, { borrowing: d.borrowing||0, returned: d.returned||0, overdue: d.overdue||0, total: d.total||0 }) } catch {}
 
-  const days = [], wb = [], ob = []
-  const now = new Date()
-  for (let i = 6; i >= 0; i--) { const d = new Date(now); d.setDate(d.getDate() - i); days.push(d.toISOString().substring(5, 10)); wb.push(0); ob.push(0) }
-  const cat = {}
-
+  // 近7天趋势（SQL聚合查询）
+  let days = [], wb = [], ob = []
   try {
-    const r = await getBorrowRecords({ page: 1, pageSize: 999 })
-    ;(r.data?.list || []).forEach(item => {
-      const dd = (item.borrowTime || '').substring(5, 10); const idx = days.indexOf(dd); if (idx >= 0) wb[idx]++
-      if (item.status === 3) { const rd = (item.dueTime || '').substring(5, 10); const ri = days.indexOf(rd); if (ri >= 0) ob[ri]++ }
-      const t = item.bookTitle || ''; let k = '其他'
-      if (/计算机|编程|数据|算法|网络|软件/.test(t)) k = '计算机'
-      else if (/文学|小说|诗|散文/.test(t)) k = '文学'
-      else if (/科学|物理|化学|数学|生物/.test(t)) k = '自然科学'
-      else if (/经济|管理|营销|财务/.test(t)) k = '经管'
-      else if (/哲学|心理|思想/.test(t)) k = '哲学社科'
-      cat[k] = (cat[k] || 0) + 1
+    const r = await getDailyStats()
+    ;(r.data || []).forEach(item => { days.push(item.day); wb.push(Number(item.borrow_count)||0); ob.push(Number(item.overdue_count)||0) })
+  } catch {}
+  if (!days.length) { const n = new Date(); for (let i = 6; i >= 0; i--) { const d = new Date(n); d.setDate(d.getDate() - i); days.push(d.toISOString().substring(5, 10)); wb.push(0); ob.push(0) } }
+
+  // 分类借阅统计（SQL GROUP BY）
+  let catData = [{ name: '暂无', value: 1 }]
+  try {
+    const r = await getStatsByCategory()
+    catData = (r.data || []).map(({ name, value }) => ({ name, value: Number(value) || 0 }))
+    if (!catData.length) catData = [{ name: '暂无', value: 1 }]
+  } catch {}
+
+  // 状态分布（SQL GROUP BY）
+  let stData = [{ name: '借阅中', value: stats.borrowing, itemStyle: { color: '#4361ee' } }, { name: '已归还', value: stats.returned, itemStyle: { color: '#10b981' } }, { name: '已逾期', value: stats.overdue, itemStyle: { color: '#ef4444' } }]
+  try {
+    const r = await getStatusDistribution()
+    stData = (r.data || []).map(({ name, value }) => {
+      let color = '#4361ee'
+      if (name === '已归还') color = '#10b981'
+      else if (name === '已逾期') color = '#ef4444'
+      else if (name === '已续借') color = '#f59e0b'
+      return { name, value: Number(value) || 0, itemStyle: { color } }
     })
+    if (!stData.length) stData = [{ name: '暂无', value: 1 }]
   } catch {}
 
   await nextTick()
-  const cd = Object.entries(cat).map(([n, v]) => ({ name: n, value: v }))
   const initChart = (el, opt) => { if (el) { const e = echarts.init(el); e.setOption({ tooltip: { trigger: 'axis' }, grid: { left: 50, right: 20, top: 16, bottom: 30 }, ...opt }) } }
 
   initChart(c1.value, { xAxis: { data: days }, yAxis: { type: 'value' }, series: [{ data: wb, type: 'line', smooth: true, areaStyle: { opacity: .15 }, itemStyle: { color: '#4361ee' } }] })
-  if (c2.value) { const e = echarts.init(c2.value); e.setOption({ tooltip: { trigger: 'item' }, legend: { orient: 'vertical', right: 8, top: 'center' }, series: [{ type: 'pie', radius: ['45%','75%'], center: ['42%','50%'], label: { show: false }, data: cd.length ? cd : [{ name: '暂无', value: 1 }] }] }) }
+  if (c2.value) { const e = echarts.init(c2.value); e.setOption({ tooltip: { trigger: 'item' }, legend: { orient: 'vertical', right: 8, top: 'center' }, series: [{ type: 'pie', radius: ['45%','75%'], center: ['42%','50%'], label: { show: false }, data: catData }] }) }
   initChart(c3.value, { xAxis: { data: days }, yAxis: { type: 'value' }, series: [{ data: ob, type: 'bar', itemStyle: { color: '#ef4444', borderRadius: [6,6,0,0] }, barMaxWidth: 28 }] })
-  if (c4.value) { const e = echarts.init(c4.value); e.setOption({ tooltip: { trigger: 'item' }, series: [{ type: 'pie', radius: ['45%','75%'], center: ['50%','50%'], data: [{ name: '借阅中', value: stats.borrowing, itemStyle: { color: '#4361ee' } }, { name: '已归还', value: stats.returned, itemStyle: { color: '#10b981' } }, { name: '已逾期', value: stats.overdue, itemStyle: { color: '#ef4444' } }] }] }) }
+  if (c4.value) { const e = echarts.init(c4.value); e.setOption({ tooltip: { trigger: 'item' }, series: [{ type: 'pie', radius: ['45%','75%'], center: ['50%','50%'], data: stData }] }) }
 })
 </script>
 

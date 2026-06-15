@@ -7,13 +7,16 @@ import com.campus.bookborrow.exception.BusinessException;
 import com.campus.bookborrow.mapper.BookInfoMapper;
 import com.campus.bookborrow.mapper.BorrowRecordMapper;
 import com.campus.bookborrow.service.BorrowService;
+import com.campus.bookborrow.service.FineRecordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,7 @@ public class BorrowServiceImpl implements BorrowService {
 
     private final BorrowRecordMapper borrowRecordMapper;
     private final BookInfoMapper bookInfoMapper;
+    private final FineRecordService fineRecordService;
 
     @Value("${borrow.duration-days:30}")
     private int borrowDurationDays;
@@ -48,6 +52,9 @@ public class BorrowServiceImpl implements BorrowService {
 
     @Value("${borrow.max-borrow-count:5}")
     private int maxBorrowCount;
+
+    @Value("${borrow.fine-per-day:0.5}")
+    private BigDecimal finePerDay;
 
     // ================================================================
     //  借阅记录查询
@@ -153,6 +160,13 @@ public class BorrowServiceImpl implements BorrowService {
             throw new BusinessException(500, "恢复图书库存失败");
         }
 
+        // 归还时更新罚金记录（如果有逾期）
+        int overdueDays = (int) ChronoUnit.DAYS.between(record.getDueTime(), LocalDateTime.now());
+        if (overdueDays > 0) {
+            BigDecimal fineAmount = finePerDay.multiply(BigDecimal.valueOf(overdueDays));
+            fineRecordService.updateFineOnReturn(recordId, overdueDays, fineAmount);
+        }
+
         log.info("========== 归还完成 → recordId={}, 原status={} ==========", recordId, currentStatus);
     }
 
@@ -211,6 +225,13 @@ public class BorrowServiceImpl implements BorrowService {
         int rows = borrowRecordMapper.updateStatus(recordId, BorrowRecord.STATUS_OVERDUE);
         if (rows == 0) {
             throw new BusinessException(500, "标记逾期失败");
+        }
+        // 自动生成罚金记录
+        int overdueDays = (int) ChronoUnit.DAYS.between(record.getDueTime(), LocalDateTime.now());
+        if (overdueDays > 0) {
+            BigDecimal fineAmount = finePerDay.multiply(BigDecimal.valueOf(overdueDays));
+            fineRecordService.createFineRecord(recordId, record.getUserId(),
+                    record.getBookId(), overdueDays, fineAmount);
         }
         log.info("管理员手动标记逾期 → recordId={}", recordId);
     }

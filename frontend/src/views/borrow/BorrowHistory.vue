@@ -29,7 +29,7 @@
           <el-table-column label="状态" width="80"><template #default="{ row }"><el-tag :type="['','success','info','danger'][row.status]" size="small">{{ ['借阅中','已续借','已归还','已逾期'][row.status] }}</el-tag></template></el-table-column>
           <el-table-column label="操作" width="140" fixed="right">
             <template #default="{ row }">
-              <el-button v-if="row.status===0" type="primary" size="small" @click="doRenew(row.id)">续借</el-button>
+              <el-button v-if="row.status===0||row.status===1" type="primary" size="small" @click="doRenew(row.id)">续借</el-button>
               <el-button v-if="row.status!==2" type="success" size="small" @click="doReturn(row.id)">归还</el-button>
             </template>
           </el-table-column>
@@ -43,7 +43,7 @@
         <div class="mc-top"><strong>{{ r.bookTitle }}</strong><el-tag :type="['','success','info','danger'][r.status]" size="small">{{['借阅中','已续借','已归还','已逾期'][r.status]}}</el-tag></div>
         <p class="mc-p">应还：{{ sd(r.dueTime) }}<template v-if="r.overdueDays>0"><span class="fine"> · 罚 ¥{{ r.dynamicFine }}</span></template></p>
         <div v-if="r.status!==2" style="margin:6px 0"><el-progress :percentage="calPct(r)" :color="calColor(r)" :stroke-width="7" /><span :class="['pg-text', calDays(r)<0?'red':'']">{{ calDays(r)>=0?`${calDays(r)}天到期`:`逾期${Math.abs(calDays(r))}天` }}</span></div>
-        <div class="mc-act"><el-button v-if="r.status===0" size="small" type="primary" @click="doRenew(r.id)">续借</el-button><el-button v-if="r.status!==2" size="small" type="success" @click="doReturn(r.id)">归还</el-button></div>
+        <div class="mc-act"><el-button v-if="r.status===0||r.status===1" size="small" type="primary" @click="doRenew(r.id)">续借</el-button><el-button v-if="r.status!==2" size="small" type="success" @click="doReturn(r.id)">归还</el-button></div>
       </div>
     </div>
 

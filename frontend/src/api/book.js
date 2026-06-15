@@ -24,3 +24,8 @@ export function updateBook(id, data) {
 export function updateBookStatus(id, status) {
   return request({ url: `/books/${id}/status`, method: 'put', params: { status } })
 }
+
+/** 删除图书（管理员） */
+export function deleteBook(id) {
+  return request({ url: `/books/${id}`, method: 'delete' })
+}

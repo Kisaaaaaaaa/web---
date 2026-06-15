@@ -13,6 +13,7 @@
             <router-link to="/admin/users" class="nav-item" :class="{ active: $route.path === '/admin/users' }"><span class="ni-icon">👥</span>用户</router-link>
             <router-link to="/admin/books" class="nav-item" :class="{ active: $route.path === '/admin/books' }"><span class="ni-icon">📚</span>图书</router-link>
             <router-link to="/admin/borrows" class="nav-item" :class="{ active: $route.path === '/admin/borrows' }"><span class="ni-icon">📋</span>借阅</router-link>
+            <router-link to="/admin/fines" class="nav-item" :class="{ active: $route.path === '/admin/fines' }"><span class="ni-icon">💰</span>罚金</router-link>
             <router-link to="/admin/categories" class="nav-item" :class="{ active: $route.path === '/admin/categories' }"><span class="ni-icon">📂</span>分类</router-link>
             <router-link to="/admin/carousels" class="nav-item" :class="{ active: $route.path === '/admin/carousels' }"><span class="ni-icon">🖼️</span>轮播</router-link>
             <router-link to="/admin/announcements" class="nav-item" :class="{ active: $route.path === '/admin/announcements' }"><span class="ni-icon">📢</span>公告</router-link>
@@ -21,6 +22,7 @@
             <router-link to="/home" class="nav-item" :class="{ active: $route.path === '/home' }">🏠 首页</router-link>
             <router-link to="/books" class="nav-item" :class="{ active: $route.path.startsWith('/books') }">📖 图书列表</router-link>
             <router-link to="/borrows" class="nav-item" :class="{ active: $route.path.startsWith('/borrows') }">📓 我的借阅</router-link>
+            <router-link to="/fines" class="nav-item" :class="{ active: $route.path === '/fines' }">💰 我的罚金</router-link>
             <router-link to="/favorites" class="nav-item" :class="{ active: $route.path.startsWith('/favorites') }">⭐ 我的收藏</router-link>
           </template>
         </nav>
@@ -40,6 +42,7 @@
               <el-dropdown-menu>
                 <el-dropdown-item @click="$router.push('/profile')"><el-icon><User /></el-icon> 个人主页</el-dropdown-item>
                 <el-dropdown-item v-if="!userStore.isAdmin" @click="$router.push('/borrows')"><el-icon><Notebook /></el-icon> 我的借阅</el-dropdown-item>
+                <el-dropdown-item v-if="!userStore.isAdmin" @click="$router.push('/fines')"><el-icon><Money /></el-icon> 我的罚金</el-dropdown-item>
                 <el-dropdown-item v-if="!userStore.isAdmin" @click="$router.push('/favorites')"><el-icon><Star /></el-icon> 我的收藏</el-dropdown-item>
                 <el-dropdown-item divided @click="handleLogout"><el-icon><SwitchButton /></el-icon> 退出登录</el-dropdown-item>
               </el-dropdown-menu>
@@ -76,7 +79,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
-import { ArrowDown, User, Notebook, Star, SwitchButton } from '@element-plus/icons-vue'
+import { ArrowDown, User, Notebook, Star, SwitchButton, Money } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { getBorrowStats } from '@/api/borrow'
 

@@ -6,6 +6,7 @@ com\campus\bookborrow\controller\FavoriteController.class
 com\campus\bookborrow\config\WebConfig.class
 com\campus\bookborrow\dto\BookDetailVO.class
 com\campus\bookborrow\service\CategoryService.class
+com\campus\bookborrow\service\impl\FineRecordServiceImpl.class
 com\campus\bookborrow\service\ReviewService.class
 com\campus\bookborrow\service\AnnouncementService.class
 com\campus\bookborrow\mapper\AnnouncementMapper.class
@@ -13,6 +14,7 @@ com\campus\bookborrow\entity\SysRole.class
 com\campus\bookborrow\dto\BorrowRecordVO.class
 com\campus\bookborrow\service\AuthService.class
 com\campus\bookborrow\config\JwtInterceptor.class
+com\campus\bookborrow\entity\FineRecord.class
 com\campus\bookborrow\service\impl\BorrowServiceImpl.class
 com\campus\bookborrow\entity\Carousel.class
 com\campus\bookborrow\service\BorrowService.class
@@ -33,6 +35,7 @@ com\campus\bookborrow\service\impl\CarouselServiceImpl.class
 com\campus\bookborrow\entity\Announcement.class
 com\campus\bookborrow\mapper\BookReviewMapper.class
 com\campus\bookborrow\service\impl\UserServiceImpl.class
+com\campus\bookborrow\service\FineRecordService.class
 com\campus\bookborrow\exception\BusinessException.class
 com\campus\bookborrow\controller\UploadController.class
 com\campus\bookborrow\dto\LoginVO.class
@@ -42,6 +45,7 @@ com\campus\bookborrow\entity\BookReview.class
 com\campus\bookborrow\service\impl\BookServiceImpl.class
 com\campus\bookborrow\controller\AnnouncementController.class
 com\campus\bookborrow\controller\BorrowController.class
+com\campus\bookborrow\controller\FineRecordController.class
 com\campus\bookborrow\entity\SysUser.class
 com\campus\bookborrow\controller\CarouselController.class
 com\campus\bookborrow\service\CarouselService.class
@@ -50,6 +54,7 @@ com\campus\bookborrow\controller\UserController.class
 com\campus\bookborrow\controller\BookController.class
 com\campus\bookborrow\dto\TopBookVO.class
 com\campus\bookborrow\mapper\CarouselMapper.class
+com\campus\bookborrow\mapper\FineRecordMapper.class
 com\campus\bookborrow\service\FavoriteService.class
 com\campus\bookborrow\service\UserService.class
 com\campus\bookborrow\entity\BookInfo.class
