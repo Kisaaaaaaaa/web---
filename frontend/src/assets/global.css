@@ -1,0 +1,154 @@
+/* ============================================================
+   全局样式 - 校园图书借阅自助管理系统
+   ============================================================ */
+
+:root {
+  --primary: #4361ee;
+  --primary-light: #eef0ff;
+  --primary-dark: #3a56d4;
+  --success: #10b981;
+  --success-light: #ecfdf5;
+  --warning: #f59e0b;
+  --warning-light: #fffbeb;
+  --danger: #ef4444;
+  --danger-light: #fef2f2;
+  --purple: #8b5cf6;
+  --purple-light: #f5f3ff;
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,.06), 0 2px 4px -2px rgba(0,0,0,.04);
+  --shadow-lg: 0 10px 25px -5px rgba(0,0,0,.08), 0 4px 10px -6px rgba(0,0,0,.04);
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+               'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   Element Plus 全局覆盖
+   ============================================================ */
+
+/* 卡片 */
+.el-card {
+  border-radius: var(--radius) !important;
+  border: none !important;
+  box-shadow: var(--shadow) !important;
+  transition: box-shadow .25s ease !important;
+}
+.el-card:hover { box-shadow: var(--shadow-lg) !important; }
+.el-card__header { border-bottom: 1px solid var(--border) !important; padding: 18px 24px !important; }
+.el-card__body { padding: 24px !important; }
+
+/* 按钮 */
+.el-button {
+  border-radius: var(--radius-sm) !important;
+  font-weight: 500 !important;
+  transition: all .2s ease !important;
+}
+.el-button--primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(67,97,238,.3) !important;
+}
+.el-button--primary:hover {
+  box-shadow: 0 6px 20px rgba(67,97,238,.4) !important;
+  transform: translateY(-1px);
+}
+.el-button--large { height: 44px; padding: 0 28px; font-size: 15px; }
+
+/* 表格 */
+.el-table { border-radius: var(--radius); overflow: hidden; }
+.el-table th.el-table__cell {
+  background: #f8fafc !important;
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  font-size: 13px;
+  letter-spacing: .3px;
+  border-bottom: 2px solid var(--border) !important;
+}
+.el-table td.el-table__cell { border-bottom: 1px solid #f1f5f9 !important; }
+.el-table .el-table__row:hover td { background: var(--primary-light) !important; }
+
+/* Tag */
+.el-tag {
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+}
+.el-tag--dark { box-shadow: var(--shadow-sm); }
+
+/* Dialog */
+.el-dialog {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+.el-dialog__header { border-bottom: 1px solid var(--border); padding: 20px 24px; }
+.el-dialog__body { padding: 24px; }
+
+/* Form */
+.el-form-item__label { font-weight: 600; color: var(--text-secondary); }
+
+/* Input */
+.el-input__wrapper {
+  border-radius: var(--radius-sm) !important;
+  box-shadow: 0 0 0 1px var(--border) !important;
+  transition: box-shadow .2s !important;
+}
+.el-input__wrapper:hover { box-shadow: 0 0 0 1px var(--primary) !important; }
+
+/* Menu */
+.el-menu { border-bottom: none !important; }
+.el-menu--horizontal > .el-menu-item.is-active {
+  border-bottom-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+/* Progress */
+.el-progress-bar__outer { border-radius: 10px !important; background: #e2e8f0 !important; }
+.el-progress-bar__inner { border-radius: 10px !important; }
+
+/* Pagination */
+.el-pagination { font-weight: 500; }
+.el-pagination .el-pager li.is-active {
+  background: var(--primary) !important;
+  border-radius: 6px !important;
+}
+
+/* el-button--link 颜色提亮（解决管理员表格中看不清的问题） */
+.el-button.is-link { color: var(--primary) !important; font-weight: 500 !important; }
+.el-button.is-link:hover { color: #6584ff !important; }
+.el-button.is-link.el-button--primary { color: var(--primary) !important; }
+.el-button.is-link.el-button--danger { color: var(--danger) !important; }
+.el-button.is-link.el-button--warning { color: var(--warning) !important; }
+.el-button.is-link.el-button--success { color: var(--success) !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* 过渡动画 */
+.fade-enter-active, .fade-leave-active { transition: opacity .3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* 通用类 */
+.text-muted { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+.mb-16 { margin-bottom: 16px; }
+.mb-20 { margin-bottom: 20px; }

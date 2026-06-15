@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.bookborrow.mapper.BookReviewMapper">
+
+    <resultMap id="ReviewVOMap" type="com.campus.bookborrow.entity.BookReview">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="bookId" column="book_id"/>
+        <result property="content" column="content"/>
+        <result property="rating" column="rating"/>
+        <result property="createTime" column="create_time"/>
+        <result property="username" column="username"/>
+        <result property="realName" column="real_name"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO book_review (user_id, book_id, content, rating)
+        VALUES (#{userId}, #{bookId}, #{content}, #{rating})
+    </insert>
+
+    <select id="selectByBookId" resultMap="ReviewVOMap">
+        SELECT r.*, u.username, u.real_name
+        FROM book_review r
+        JOIN sys_user u ON r.user_id = u.id
+        WHERE r.book_id = #{bookId}
+        ORDER BY r.create_time DESC
+    </select>
+
+    <select id="countByBookId" resultType="int">
+        SELECT COUNT(*) FROM book_review WHERE book_id = #{bookId}
+    </select>
+
+    <select id="avgRating" resultType="double">
+        SELECT COALESCE(AVG(rating), 0) FROM book_review WHERE book_id = #{bookId}
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM book_review WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+</mapper>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="560" viewBox="0 0 400 560">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669"/>
+      <stop offset="100%" style="stop-color:#007346"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="560" fill="url(#g)" rx="6"/>
+  <rect x="22" y="22" width="356" height="516" rx="3" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+  <rect x="22" y="52" width="100" height="24" rx="12" fill="rgba(255,255,255,0.13)"/>
+  <text x="72" y="69" fill="rgba(255,255,255,0.85)" font-size="12" text-anchor="middle" font-family="sans-serif">自然科学</text>
+  <text x="200" y="220" class="title">理论力学</text>
+
+  <text x="200" y="330" fill="rgba(255,255,255,0.65)" font-size="15" text-anchor="middle" font-family="sans-serif">周衍柏 著</text>
+  <text x="200" y="520" fill="rgba(255,255,255,0.18)" font-size="48" text-anchor="middle">📚</text>
+  <style>
+    .title{fill:#fff;font-size:26px;font-weight:700;font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;text-anchor:middle;letter-spacing:1px}
+  </style>
+</svg>

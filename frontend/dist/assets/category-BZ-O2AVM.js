@@ -1,0 +1,1 @@
+import{r as t}from"./_plugin-vue_export-helper-B-_C0btN.js";function a(){return t({url:"/categories",method:"get"})}function u(e){return t({url:"/categories",method:"post",data:e})}function n(e,r){return t({url:`/categories/${e}`,method:"put",data:r})}function s(e){return t({url:`/categories/${e}`,method:"delete"})}export{u as a,s as d,a as g,n as u};
