@@ -29,7 +29,7 @@ jwt:
 
 borrow:
   duration-days: 30
-  max-renew-count: 1
+  max-renew-count: 2
   fine-per-day: 0.5
   max-borrow-count: 5
 

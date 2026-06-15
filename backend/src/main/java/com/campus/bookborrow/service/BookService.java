@@ -28,4 +28,7 @@ public interface BookService {
 
     /** 上架/下架图书（管理员） */
     void updateBookStatus(Long id, Integer status);
+
+    /** 删除图书（管理员，软删除） */
+    void deleteBook(Long id);
 }

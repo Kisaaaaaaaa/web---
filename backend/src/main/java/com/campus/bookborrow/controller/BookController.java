@@ -74,4 +74,15 @@ public class BookController {
         bookService.updateBookStatus(id, status);
         return Result.ok(status == 1 ? "图书已上架" : "图书已下架");
     }
+
+    /** 删除图书（管理员，软删除） */
+    @DeleteMapping("/{id}")
+    public Result<?> deleteBook(@RequestAttribute("roleCode") String roleCode,
+                                 @PathVariable Long id) {
+        if (!"ROLE_ADMIN".equals(roleCode)) {
+            return Result.error(403, "无操作权限");
+        }
+        bookService.deleteBook(id);
+        return Result.ok("图书已删除");
+    }
 }

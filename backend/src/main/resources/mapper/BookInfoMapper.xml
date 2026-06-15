@@ -155,4 +155,11 @@
         WHERE id = #{id} AND is_deleted = 0
     </update>
 
+    <!-- 软删除图书（管理员） -->
+    <update id="deleteBook">
+        UPDATE book_info
+        SET is_deleted = 1, update_time = NOW()
+        WHERE id = #{id} AND is_deleted = 0
+    </update>
+
 </mapper>

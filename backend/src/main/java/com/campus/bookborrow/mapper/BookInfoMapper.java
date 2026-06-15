@@ -60,4 +60,7 @@ public interface BookInfoMapper {
 
     /** 下架/上架图书 */
     int updateStatus(@Param("id") Long id, @Param("status") Integer status);
+
+    /** 软删除图书（管理员） */
+    int deleteBook(@Param("id") Long id);
 }

@@ -83,4 +83,22 @@ public class BorrowController {
     public Result<?> getTopBooks(@RequestParam(defaultValue = "10") int limit) {
         return Result.ok(borrowService.getTopBooks(limit));
     }
+
+    /** 各分类借阅数量统计 */
+    @GetMapping("/stats/category")
+    public Result<?> getStatsByCategory() {
+        return Result.ok(borrowService.getBorrowCountByCategory());
+    }
+
+    /** 近7天每日借阅与逾期统计 */
+    @GetMapping("/stats/daily")
+    public Result<?> getDailyStats() {
+        return Result.ok(borrowService.getDailyBorrowStats());
+    }
+
+    /** 借阅状态分布统计 */
+    @GetMapping("/stats/distribution")
+    public Result<?> getStatusDistribution() {
+        return Result.ok(borrowService.getStatusDistribution());
+    }
 }

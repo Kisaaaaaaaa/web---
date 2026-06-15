@@ -51,7 +51,7 @@ public interface BorrowRecordMapper {
     int updateStatus(@Param("id") Long id, @Param("status") Integer status);
 
     /** 续借：更新 due_time + 状态 + renew_count */
-    int updateRenew(@Param("id") Long id);
+    int updateRenew(@Param("id") Long id, @Param("maxRenewCount") int maxRenewCount);
 
     /** 统计用户各状态借阅数量 */
     List<Map<String, Object>> countByStatus(@Param("userId") Long userId);
@@ -70,4 +70,13 @@ public interface BorrowRecordMapper {
 
     /** 查询所有已逾期但状态未更新的记录 */
     List<BorrowRecord> selectOverdueRecords();
+
+    /** 各分类借阅数量统计（多表联查 + 聚合） */
+    List<Map<String, Object>> selectBorrowCountByCategory();
+
+    /** 近7天每日借阅与逾期统计 */
+    List<Map<String, Object>> selectDailyBorrowStats();
+
+    /** 借阅状态分布统计 */
+    List<Map<String, Object>> selectStatusDistribution();
 }

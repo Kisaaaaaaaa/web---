@@ -40,4 +40,13 @@ public interface BorrowService {
 
     /** 获取用户逾期数量 */
     int getUserOverdueCount(Long userId);
+
+    /** 各分类借阅数量统计 */
+    List<Map<String, Object>> getBorrowCountByCategory();
+
+    /** 近7天每日借阅与逾期统计 */
+    List<Map<String, Object>> getDailyBorrowStats();
+
+    /** 借阅状态分布统计 */
+    List<Map<String, Object>> getStatusDistribution();
 }

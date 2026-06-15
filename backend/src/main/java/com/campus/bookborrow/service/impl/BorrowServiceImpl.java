@@ -172,10 +172,10 @@ public class BorrowServiceImpl implements BorrowService {
             throw new BusinessException(404, "借阅记录不存在");
         }
 
-        // 只有"借阅中"状态可以续借
-        if (record.getStatus() != BorrowRecord.STATUS_BORROWING) {
+        // 只有"借阅中"或"已续借"状态可以续借
+        if (record.getStatus() != BorrowRecord.STATUS_BORROWING
+                && record.getStatus() != BorrowRecord.STATUS_RENEWED) {
             throw new BusinessException(4003,
-                    record.getStatus() == 1 ? "该图书已续借过，无法再次续借" :
                     record.getStatus() == 2 ? "该图书已归还，无法续借" :
                     record.getStatus() == 3 ? "该图书已逾期，请先归还再借" : "状态异常，无法续借");
         }
@@ -185,7 +185,7 @@ public class BorrowServiceImpl implements BorrowService {
             throw new BusinessException(4003, "续借次数已达上限（" + maxRenewCount + "次）");
         }
 
-        int updateRows = borrowRecordMapper.updateRenew(recordId);
+        int updateRows = borrowRecordMapper.updateRenew(recordId, maxRenewCount);
         if (updateRows == 0) {
             throw new BusinessException(500, "续借失败（可能已达续借次数上限）");
         }
@@ -261,5 +261,20 @@ public class BorrowServiceImpl implements BorrowService {
             return borrowRecordMapper.countUserOverdue(userId);
         }
         return borrowRecordMapper.countAllOverdue();
+    }
+
+    @Override
+    public List<Map<String, Object>> getBorrowCountByCategory() {
+        return borrowRecordMapper.selectBorrowCountByCategory();
+    }
+
+    @Override
+    public List<Map<String, Object>> getDailyBorrowStats() {
+        return borrowRecordMapper.selectDailyBorrowStats();
+    }
+
+    @Override
+    public List<Map<String, Object>> getStatusDistribution() {
+        return borrowRecordMapper.selectStatusDistribution();
     }
 }

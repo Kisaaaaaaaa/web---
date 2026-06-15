@@ -113,4 +113,19 @@ public class BookServiceImpl implements BookService {
         }
         log.info("图书状态已更新 → id={}, status={}", id, status);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteBook(Long id) {
+        BookInfo exist = bookInfoMapper.selectById(id);
+        if (exist == null) {
+            throw new BusinessException(404, "图书不存在");
+        }
+        // 检查是否有未归还的借阅记录
+        int rows = bookInfoMapper.deleteBook(id);
+        if (rows == 0) {
+            throw new BusinessException(500, "删除图书失败");
+        }
+        log.info("图书已删除（软删除） → id={}, title={}", id, exist.getTitle());
+    }
 }

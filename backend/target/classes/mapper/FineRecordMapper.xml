@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.campus.bookborrow.mapper.FineRecordMapper">
+
+    <!-- ============================================================
+         ResultMap：罚金记录视图对象（含联查用户和图书信息）
+    ============================================================ -->
+    <resultMap id="FineRecordMap" type="com.campus.bookborrow.entity.FineRecord">
+        <id     property="id"            column="id"/>
+        <result property="borrowId"      column="borrow_id"/>
+        <result property="userId"        column="user_id"/>
+        <result property="bookId"        column="book_id"/>
+        <result property="overdueDays"   column="overdue_days"/>
+        <result property="fineAmount"    column="fine_amount"/>
+        <result property="paymentStatus" column="payment_status"/>
+        <result property="createTime"    column="create_time"/>
+        <result property="updateTime"    column="update_time"/>
+        <result property="isDeleted"     column="is_deleted"/>
+        <!-- 联查字段 -->
+        <result property="username"      column="username"/>
+        <result property="realName"      column="real_name"/>
+        <result property="studentNo"     column="student_no"/>
+        <result property="bookTitle"     column="book_title"/>
+        <result property="isbn"          column="isbn"/>
+    </resultMap>
+
+    <!-- ============================================================
+         多表联查罚金记录（fine_record + sys_user + book_info）
+         支持：用户ID过滤、用户名模糊、缴费状态筛选、分页
+    ============================================================ -->
+    <select id="selectFineRecords" resultMap="FineRecordMap">
+        SELECT
+            fr.id, fr.borrow_id, fr.user_id, fr.book_id,
+            fr.overdue_days, fr.fine_amount, fr.payment_status,
+            fr.create_time, fr.update_time, fr.is_deleted,
+            u.username, u.real_name, u.student_no,
+            b.title AS book_title, b.isbn
+        FROM fine_record fr
+        LEFT JOIN sys_user u  ON fr.user_id = u.id  AND u.is_deleted = 0
+        LEFT JOIN book_info b ON fr.book_id = b.id  AND b.is_deleted = 0
+        WHERE fr.is_deleted = 0
+        <if test="userId != null">
+            AND fr.user_id = #{userId}
+        </if>
+        <if test="username != null and username != ''">
+            AND (u.username LIKE CONCAT('%', #{username}, '%')
+                 OR u.real_name LIKE CONCAT('%', #{username}, '%'))
+        </if>
+        <if test="paymentStatus != null">
+            AND fr.payment_status = #{paymentStatus}
+        </if>
+        ORDER BY fr.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 条件查询罚金记录总数 -->
+    <select id="countFineRecords" resultType="int">
+        SELECT COUNT(*)
+        FROM fine_record fr
+        LEFT JOIN sys_user u ON fr.user_id = u.id AND u.is_deleted = 0
+        WHERE fr.is_deleted = 0
+        <if test="userId != null">
+            AND fr.user_id = #{userId}
+        </if>
+        <if test="username != null and username != ''">
+            AND (u.username LIKE CONCAT('%', #{username}, '%')
+                 OR u.real_name LIKE CONCAT('%', #{username}, '%'))
+        </if>
+        <if test="paymentStatus != null">
+            AND fr.payment_status = #{paymentStatus}
+        </if>
+    </select>
+
+    <!-- 插入罚金记录 -->
+    <insert id="insertFineRecord"
+            parameterType="com.campus.bookborrow.entity.FineRecord"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO fine_record (borrow_id, user_id, book_id,
+                                  overdue_days, fine_amount, payment_status)
+        VALUES (#{borrowId}, #{userId}, #{bookId},
+                #{overdueDays}, #{fineAmount}, #{paymentStatus})
+    </insert>
+
+    <!-- 根据ID查询 -->
+    <select id="selectById" resultMap="FineRecordMap">
+        SELECT
+            fr.*,
+            u.username, u.real_name, u.student_no,
+            b.title AS book_title, b.isbn
+        FROM fine_record fr
+        LEFT JOIN sys_user u  ON fr.user_id = u.id  AND u.is_deleted = 0
+        LEFT JOIN book_info b ON fr.book_id = b.id  AND b.is_deleted = 0
+        WHERE fr.id = #{id} AND fr.is_deleted = 0
+    </select>
+
+    <!-- 根据借阅记录ID查询 -->
+    <select id="selectByBorrowId" resultMap="FineRecordMap">
+        SELECT * FROM fine_record
+        WHERE borrow_id = #{borrowId} AND is_deleted = 0
+    </select>
+
+    <!-- 更新缴费状态 -->
+    <update id="updatePaymentStatus">
+        UPDATE fine_record
+        SET payment_status = #{paymentStatus}, update_time = NOW()
+        WHERE id = #{id} AND is_deleted = 0
+    </update>
+
+    <!-- 更新罚金金额（归还时重新计算） -->
+    <update id="updateFineAmount">
+        UPDATE fine_record
+        SET overdue_days = #{overdueDays},
+            fine_amount  = #{fineAmount},
+            update_time  = NOW()
+        WHERE id = #{id} AND is_deleted = 0
+    </update>
+
+    <!-- 统计用户未缴罚金总额 -->
+    <select id="sumUnpaidFine" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(fine_amount), 0)
+        FROM fine_record
+        WHERE user_id = #{userId}
+          AND payment_status = 0
+          AND is_deleted = 0
+    </select>
+
+    <!-- 统计所有未缴罚金总额 -->
+    <select id="sumAllUnpaidFine" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(fine_amount), 0)
+        FROM fine_record
+        WHERE payment_status = 0 AND is_deleted = 0
+    </select>
+
+    <!-- 罚金状态分布统计 -->
+    <select id="selectFineStatusDistribution" resultType="java.util.HashMap">
+        SELECT
+            CASE payment_status
+                WHEN 0 THEN '未缴纳'
+                WHEN 1 THEN '已缴纳'
+                ELSE '未知'
+            END AS name,
+            COUNT(*) AS value,
+            COALESCE(SUM(fine_amount), 0) AS total_amount
+        FROM fine_record
+        WHERE is_deleted = 0
+        GROUP BY payment_status
+    </select>
+
+</mapper>
