@@ -45,8 +45,17 @@ async function handleRegister() {
 </script>
 
 <style scoped>
-.reg-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #f0fdf4 100%); padding: 24px; }
-.reg-card { width: 100%; max-width: 560px; background: #fff; border-radius: var(--radius-xl); box-shadow: 0 25px 80px rgba(0,0,0,.12); padding: 44px 40px; }
+/*
+ * 背景图片路径：请将图片放入 frontend/public/ 目录下
+ * 然后修改下方 url 为实际文件名，例如 url('/bg-register.jpg')
+ */
+.reg-page {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: url('/bg-register.jpg') center/cover no-repeat;
+  background-color: #1e293b;
+  position: relative; padding: 24px;
+}
+.reg-card { width: 100%; max-width: 560px; background: #fff; border-radius: var(--radius-xl); box-shadow: 0 25px 80px rgba(0,0,0,.25); padding: 44px 40px; position: relative; z-index: 1; }
 .reg-card h2 { font-size: 24px; font-weight: 700; margin: 0 0 4px; }
 .sub { font-size: 14px; color: var(--text-muted); margin: 0 0 28px; }
 .reg-btn { width: 100%; height: 48px; font-size: 16px; font-weight: 600; letter-spacing: 4px; }

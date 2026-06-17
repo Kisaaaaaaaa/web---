@@ -15,7 +15,7 @@
       <el-card shadow="never" class="review-card">
         <template #header>
           <div class="review-header">
-            <span>💬 读者评论 ({{ reviewStats.count }}条 · 均分{{ reviewStats.avgRating }}⭐)</span>
+            <span><el-icon style="vertical-align:-2px"><ChatDotSquare /></el-icon> 读者评论（{{ reviewStats.count }}条，均分 {{ reviewStats.avgRating }}）</span>
           </div>
         </template>
         <!-- 写评论 -->
@@ -53,7 +53,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ArrowLeft } from '@element-plus/icons-vue'
+import { ArrowLeft, ChatDotSquare } from '@element-plus/icons-vue'
 import { getBookDetail } from '@/api/book'
 import { borrowBook } from '@/api/borrow'
 import { getReviews, getReviewStats, addReview } from '@/api/review'

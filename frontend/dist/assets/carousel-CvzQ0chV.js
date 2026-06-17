@@ -1,0 +1,1 @@
+import{r as e}from"./_plugin-vue_export-helper-snqo9O-v.js";const t=()=>e({url:"/carousels",method:"get"}),l=()=>e({url:"/carousels/all",method:"get"}),r=s=>e({url:"/carousels",method:"post",data:s}),u=(s,a)=>e({url:`/carousels/${s}`,method:"put",data:a}),d=s=>e({url:`/carousels/${s}`,method:"delete"});export{l as a,r as b,d,t as g,u};

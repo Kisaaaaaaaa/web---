@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="bh-header">
-      <h2>💰 我的罚金</h2>
+      <h2>我的罚金</h2>
       <el-tag type="danger" size="large" effect="dark">待缴：¥{{ unpaidTotal }}</el-tag>
     </div>
 

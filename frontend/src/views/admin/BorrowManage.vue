@@ -25,7 +25,7 @@
 
     <!-- 借阅记录明细 -->
     <el-card shadow="never" class="card">
-      <template #header>📋 借阅记录明细</template>
+      <template #header>借阅记录明细</template>
       <div class="tbl-wrap">
         <el-table :data="list" v-loading="loading" stripe size="medium">
           <el-table-column label="借阅人" width="90"><template #default="{row}">{{ row.realName }}</template></el-table-column>

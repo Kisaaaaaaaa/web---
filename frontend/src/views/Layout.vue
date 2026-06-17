@@ -3,27 +3,27 @@
     <header class="top-header">
       <div class="header-inner">
         <div class="header-logo" @click="userStore.isAdmin ? $router.push('/admin/dashboard') : $router.push('/home')">
-          <span class="logo-icon">📚</span>
+          <el-icon :size="22" class="logo-icon"><Reading /></el-icon>
           <span class="logo-text">校园图书借阅</span>
         </div>
 
         <nav class="header-nav">
           <template v-if="userStore.isAdmin">
-            <router-link to="/admin/dashboard" class="nav-item" :class="{ active: $route.path === '/admin/dashboard' }"><span class="ni-icon">📊</span>仪表盘</router-link>
-            <router-link to="/admin/users" class="nav-item" :class="{ active: $route.path === '/admin/users' }"><span class="ni-icon">👥</span>用户</router-link>
-            <router-link to="/admin/books" class="nav-item" :class="{ active: $route.path === '/admin/books' }"><span class="ni-icon">📚</span>图书</router-link>
-            <router-link to="/admin/borrows" class="nav-item" :class="{ active: $route.path === '/admin/borrows' }"><span class="ni-icon">📋</span>借阅</router-link>
-            <router-link to="/admin/fines" class="nav-item" :class="{ active: $route.path === '/admin/fines' }"><span class="ni-icon">💰</span>罚金</router-link>
-            <router-link to="/admin/categories" class="nav-item" :class="{ active: $route.path === '/admin/categories' }"><span class="ni-icon">📂</span>分类</router-link>
-            <router-link to="/admin/carousels" class="nav-item" :class="{ active: $route.path === '/admin/carousels' }"><span class="ni-icon">🖼️</span>轮播</router-link>
-            <router-link to="/admin/announcements" class="nav-item" :class="{ active: $route.path === '/admin/announcements' }"><span class="ni-icon">📢</span>公告</router-link>
+            <router-link to="/admin/dashboard" class="nav-item" :class="{ active: $route.path === '/admin/dashboard' }"><el-icon class="ni-icon"><DataBoard /></el-icon>仪表盘</router-link>
+            <router-link to="/admin/users" class="nav-item" :class="{ active: $route.path === '/admin/users' }"><el-icon class="ni-icon"><User /></el-icon>用户</router-link>
+            <router-link to="/admin/books" class="nav-item" :class="{ active: $route.path === '/admin/books' }"><el-icon class="ni-icon"><Reading /></el-icon>图书</router-link>
+            <router-link to="/admin/borrows" class="nav-item" :class="{ active: $route.path === '/admin/borrows' }"><el-icon class="ni-icon"><Notebook /></el-icon>借阅</router-link>
+            <router-link to="/admin/fines" class="nav-item" :class="{ active: $route.path === '/admin/fines' }"><el-icon class="ni-icon"><Coin /></el-icon>罚金</router-link>
+            <router-link to="/admin/categories" class="nav-item" :class="{ active: $route.path === '/admin/categories' }"><el-icon class="ni-icon"><Folder /></el-icon>分类</router-link>
+            <router-link to="/admin/carousels" class="nav-item" :class="{ active: $route.path === '/admin/carousels' }"><el-icon class="ni-icon"><Picture /></el-icon>轮播</router-link>
+            <router-link to="/admin/announcements" class="nav-item" :class="{ active: $route.path === '/admin/announcements' }"><el-icon class="ni-icon"><Bell /></el-icon>公告</router-link>
           </template>
           <template v-else>
-            <router-link to="/home" class="nav-item" :class="{ active: $route.path === '/home' }">🏠 首页</router-link>
-            <router-link to="/books" class="nav-item" :class="{ active: $route.path.startsWith('/books') }">📖 图书列表</router-link>
-            <router-link to="/borrows" class="nav-item" :class="{ active: $route.path.startsWith('/borrows') }">📓 我的借阅</router-link>
-            <router-link to="/fines" class="nav-item" :class="{ active: $route.path === '/fines' }">💰 我的罚金</router-link>
-            <router-link to="/favorites" class="nav-item" :class="{ active: $route.path.startsWith('/favorites') }">⭐ 我的收藏</router-link>
+            <router-link to="/home" class="nav-item" :class="{ active: $route.path === '/home' }"><el-icon class="ni-icon"><HomeFilled /></el-icon>首页</router-link>
+            <router-link to="/books" class="nav-item" :class="{ active: $route.path.startsWith('/books') }"><el-icon class="ni-icon"><Reading /></el-icon>图书列表</router-link>
+            <router-link to="/borrows" class="nav-item" :class="{ active: $route.path.startsWith('/borrows') }"><el-icon class="ni-icon"><Notebook /></el-icon>我的借阅</router-link>
+            <router-link to="/fines" class="nav-item" :class="{ active: $route.path === '/fines' }"><el-icon class="ni-icon"><Coin /></el-icon>我的罚金</router-link>
+            <router-link to="/favorites" class="nav-item" :class="{ active: $route.path.startsWith('/favorites') }"><el-icon class="ni-icon"><Star /></el-icon>我的收藏</router-link>
           </template>
         </nav>
 
@@ -42,7 +42,7 @@
               <el-dropdown-menu>
                 <el-dropdown-item @click="$router.push('/profile')"><el-icon><User /></el-icon> 个人主页</el-dropdown-item>
                 <el-dropdown-item v-if="!userStore.isAdmin" @click="$router.push('/borrows')"><el-icon><Notebook /></el-icon> 我的借阅</el-dropdown-item>
-                <el-dropdown-item v-if="!userStore.isAdmin" @click="$router.push('/fines')"><el-icon><Money /></el-icon> 我的罚金</el-dropdown-item>
+                <el-dropdown-item v-if="!userStore.isAdmin" @click="$router.push('/fines')"><el-icon><Coin /></el-icon> 我的罚金</el-dropdown-item>
                 <el-dropdown-item v-if="!userStore.isAdmin" @click="$router.push('/favorites')"><el-icon><Star /></el-icon> 我的收藏</el-dropdown-item>
                 <el-dropdown-item divided @click="handleLogout"><el-icon><SwitchButton /></el-icon> 退出登录</el-dropdown-item>
               </el-dropdown-menu>
@@ -54,7 +54,7 @@
 
     <el-dialog v-model="overdueVisible" title="逾期提醒" width="400px" :close-on-click-modal="false" top="15vh">
       <div style="text-align:center;padding:12px 0">
-        <div class="overdue-icon">⚠️</div>
+        <el-icon :size="56" color="#ef4444"><WarningFilled /></el-icon>
         <p style="font-size:18px;font-weight:700;margin:16px 0 4px">您有图书已逾期！</p>
         <p style="color:var(--text-secondary);font-size:14px">共 <strong style="color:var(--danger);font-size:20px">{{ overdueCount }}</strong> 本未还，请尽快处理</p>
       </div>
@@ -79,7 +79,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
-import { ArrowDown, User, Notebook, Star, SwitchButton, Money } from '@element-plus/icons-vue'
+import { ArrowDown, User, Notebook, Star, SwitchButton, Coin, Reading, HomeFilled, DataBoard, Folder, Picture, Bell, WarningFilled } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { getBorrowStats } from '@/api/borrow'
 
@@ -118,14 +118,14 @@ async function handleLogout() {
   display: flex; align-items: center; gap: 8px;
   cursor: pointer; flex-shrink: 0; margin-right: 28px; user-select: none;
 }
-.logo-icon { font-size: 24px; }
+.logo-icon { color: var(--primary); }
 .logo-text { font-size: 17px; font-weight: 700; color: var(--text-primary); letter-spacing: .3px; white-space: nowrap; }
 
 .header-nav { display: flex; align-items: center; gap: 2px; flex: 1; overflow-x: auto; scrollbar-width: none; }
 .header-nav::-webkit-scrollbar { display: none; }
 .nav-item {
-  display: inline-flex; align-items: center; gap: 4px;
-  height: 56px; padding: 0 16px; font-size: 14px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 56px; padding: 0 14px; font-size: 14px; font-weight: 500;
   color: var(--text-secondary); text-decoration: none;
   cursor: pointer; white-space: nowrap;
   border-bottom: 3px solid transparent;
@@ -133,7 +133,7 @@ async function handleLogout() {
 }
 .nav-item:hover { color: var(--primary); background: var(--primary-light); }
 .nav-item.active { color: var(--primary); border-bottom-color: var(--primary); background: transparent; }
-.ni-icon { font-size: 15px; }
+.ni-icon { font-size: 16px; }
 
 .header-user { display: flex; align-items: center; gap: 12px; flex-shrink: 0; margin-left: 16px; }
 .role-dot { width: 8px; height: 8px; border-radius: 50%; }
@@ -152,8 +152,6 @@ async function handleLogout() {
 .app-footer { background: var(--surface); border-top: 1px solid var(--border); padding: 18px 24px; }
 .footer-inner { max-width: 1240px; margin: 0 auto; text-align: center; font-size: 13px; color: var(--text-muted); display: flex; justify-content: center; gap: 8px; }
 .dot { color: #cbd5e1; }
-
-.overdue-icon { font-size: 56px; line-height: 1; }
 
 @media (max-width: 768px) {
   .header-inner { padding: 0 12px; }

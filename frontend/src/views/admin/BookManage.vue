@@ -73,7 +73,7 @@ const filter = reactive({ keyword: '', categoryId: null, status: null })
 const query = reactive({ page: 1, pageSize: 10 })
 
 const dialogVisible = ref(false), saving = ref(false), editingBook = ref(null), formRef = ref(null)
-const form = reactive({ isbn:'',title:'',author:'',publisher:'',categoryId:null,totalStock:1,publishDate:null,coverUrl:'',description:'' })
+const form = reactive({ isbn:'',title:'',author:'',publisher:'',categoryId:null,totalStock:10,publishDate:null,coverUrl:'',description:'' })
 const rules = { isbn:[{required:true}], title:[{required:true}], author:[{required:true}], categoryId:[{required:true}], totalStock:[{required:true}] }
 
 onMounted(async () => { await loadCategories(); fetchBooks() })
@@ -91,8 +91,27 @@ async function fetchBooks() {
   } catch {} finally { loading.value = false }
 }
 
-function openDialog(book) { editingBook.value = book; if (book) Object.assign(form, { isbn:book.isbn,title:book.title,author:book.author,publisher:book.publisher,categoryId:book.categoryId,totalStock:book.totalStock,publishDate:book.publishDate,coverUrl:book.coverUrl,description:book.description }); else Object.assign(form, { isbn:'',title:'',author:'',publisher:'',categoryId:null,totalStock:1,publishDate:null,coverUrl:'',description:'' }); dialogVisible.value = true }
-async function handleSave() { if (!await formRef.value.validate().catch(()=>false)) return; saving.value = true; try { if (editingBook.value?.id) { await updateBook(editingBook.value.id, form) } else { await addBook(form) }; ElMessage.success('保存成功'); dialogVisible.value = false; fetchBooks() } catch {} finally { saving.value = false } }
+function openDialog(book) { editingBook.value = book; if (book) Object.assign(form, { isbn:book.isbn,title:book.title,author:book.author,publisher:book.publisher,categoryId:book.categoryId,totalStock:book.totalStock,publishDate:book.publishDate,coverUrl:book.coverUrl,description:book.description }); else Object.assign(form, { isbn:'',title:'',author:'',publisher:'',categoryId:null,totalStock:10,publishDate:null,coverUrl:'',description:'' }); dialogVisible.value = true }
+async function handleSave() {
+  if (!await formRef.value.validate().catch(()=>false)) return
+  saving.value = true
+  try {
+    // 将 publishDate 格式化为 yyyy-MM-dd，否则后端 LocalDate 无法解析
+    const data = { ...form }
+    if (data.publishDate) {
+      const d = new Date(data.publishDate)
+      data.publishDate = d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0')
+    }
+    if (editingBook.value?.id) {
+      await updateBook(editingBook.value.id, data)
+    } else {
+      await addBook(data)
+    }
+    ElMessage.success('保存成功'); dialogVisible.value = false; fetchBooks()
+  } catch {} finally { saving.value = false }
+}
 async function onCoverChange(file) { try { form.coverUrl = (await uploadFile(file.raw)).data.url } catch {} }
 async function handleToggleStatus(id, status) { try { await updateBookStatus(id, status); ElMessage.success(status?'已上架':'已下架'); fetchBooks() } catch {} }
 async function handleDelete(id) { try { await ElMessageBox.confirm('确认删除该图书？', '删除', { type: 'warning' }); await deleteBook(id); ElMessage.success('已删除'); fetchBooks() } catch {} }

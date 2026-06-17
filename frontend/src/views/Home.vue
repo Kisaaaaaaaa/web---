@@ -13,7 +13,7 @@
 
     <!-- 滚动公告条 -->
     <div class="anno-bar" v-if="announcements.length">
-      <span class="anno-badge">📢 公告</span>
+      <span class="anno-badge"><el-icon style="vertical-align:-2px"><Bell /></el-icon> 公告</span>
       <div class="anno-scroll">
         <span v-for="a in announcements" :key="a.id" class="anno-link" @click="openAnno(a)">
           <span v-if="a.isTop" class="anno-top">顶</span>
@@ -24,13 +24,14 @@
 
     <!-- 统计卡片 -->
     <div class="stats-grid">
-      <div v-for="c in statCards" :key="c.label" :class="['stat-card', c.cls]" @click="$router.push(c.link)">
-        <div class="sc-left">
+      <div v-for="c in statCards" :key="c.label" class="stat-card" @click="$router.push(c.link)">
+        <div :class="['sc-accent', c.cls]"></div>
+        <div class="sc-body">
           <div class="sc-num">{{ c.val }}</div>
           <div class="sc-label">{{ c.label }}</div>
         </div>
-        <div class="sc-icon">
-          <el-icon :size="28"><component :is="c.icon" /></el-icon>
+        <div :class="['sc-icon-wrap', c.cls]">
+          <el-icon :size="22"><component :is="c.icon" /></el-icon>
         </div>
       </div>
     </div>
@@ -40,8 +41,8 @@
       <!-- 热门借阅 TOP3 -->
       <div class="triple-card">
         <div class="tc-header">
-          <span class="tc-title">🔥 热门借阅 TOP3</span>
-          <el-button text size="small" type="primary" @click="$router.push('/books')">全部 →</el-button>
+          <span class="tc-title"><el-icon style="vertical-align:-2px"><TrendCharts /></el-icon> 热门借阅 TOP3</span>
+          <span class="tc-more" @click="$router.push('/books')">全部 →</span>
         </div>
         <div v-loading="rl" class="tc-body">
           <div v-for="(item, i) in topBooks" :key="item.bookId" class="top-row" @click="$router.push('/books/' + item.bookId)">
@@ -60,7 +61,7 @@
 
       <!-- 系统公告 -->
       <div class="triple-card">
-        <div class="tc-header"><span class="tc-title">📢 系统公告</span></div>
+        <div class="tc-header"><span class="tc-title"><el-icon style="vertical-align:-2px"><Bell /></el-icon> 系统公告</span></div>
         <div class="tc-body">
           <div v-for="a in announcements.slice(0, 5)" :key="a.id" class="anno-card" @click="openAnno(a)">
             <div class="ac-head">
@@ -75,12 +76,12 @@
 
       <!-- 借阅须知 -->
       <div class="triple-card">
-        <div class="tc-header"><span class="tc-title">📋 借阅须知</span></div>
+        <div class="tc-header"><span class="tc-title"><el-icon style="vertical-align:-2px"><Document /></el-icon> 借阅须知</span></div>
         <div class="tc-body">
-          <div class="rule-item"><span class="ri-icon">📅</span><div><strong>借阅期限 30 天</strong><p>从借阅当天开始计算</p></div></div>
-          <div class="rule-item"><span class="ri-icon">🔄</span><div><strong>可续借 1 次</strong><p>续借延长 30 天归还期限</p></div></div>
-          <div class="rule-item"><span class="ri-icon">📚</span><div><strong>最多借阅 5 本</strong><p>同时借阅不超过 5 本图书</p></div></div>
-          <div class="rule-item"><span class="ri-icon">💰</span><div><strong>逾期罚金 0.5 元/天</strong><p>请按时归还避免产生罚金</p></div></div>
+          <div class="rule-item"><el-icon class="ri-icon" color="#4361ee"><Calendar /></el-icon><div><strong>借阅期限 30 天</strong><p>从借阅当天开始计算</p></div></div>
+          <div class="rule-item"><el-icon class="ri-icon" color="#10b981"><Refresh /></el-icon><div><strong>可续借 2 次</strong><p>每次续借延长 30 天</p></div></div>
+          <div class="rule-item"><el-icon class="ri-icon" color="#8b5cf6"><Collection /></el-icon><div><strong>最多借阅 5 本</strong><p>同时借阅不超过 5 本图书</p></div></div>
+          <div class="rule-item"><el-icon class="ri-icon" color="#f59e0b"><Wallet /></el-icon><div><strong>逾期罚金 0.5 元/天</strong><p>请按时归还避免产生罚金</p></div></div>
         </div>
       </div>
     </div>
@@ -96,7 +97,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Notebook, CircleCheckFilled, Reading, Clock, PictureFilled } from '@element-plus/icons-vue'
+import { Notebook, CircleCheckFilled, Reading, Clock, PictureFilled, Bell, TrendCharts, Document, Calendar, Refresh, Collection, Wallet } from '@element-plus/icons-vue'
 import { getBorrowStats, getTopBooks } from '@/api/borrow'
 import { getCarousels } from '@/api/carousel'
 import { getAnnouncements } from '@/api/announcement'
@@ -143,21 +144,38 @@ onMounted(async () => {
 
 /* 统计卡片 */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
-.stat-card { border-radius: var(--radius); padding: 20px 24px; color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all .25s; }
-.stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.15); }
-.stat-card.blue { background: linear-gradient(135deg, #4361ee, #3a56d4); }
-.stat-card.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
-.stat-card.green { background: linear-gradient(135deg, #10b981, #059669); }
-.stat-card.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-.sc-num { font-size: 34px; font-weight: 700; line-height: 1.1; }
-.sc-label { font-size: 13px; opacity: .85; margin-top: 4px; }
-.sc-icon { opacity: .25; font-size: 40px; }
+.stat-card {
+  background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 20px 24px; display: flex; align-items: center; gap: 16px;
+  cursor: pointer; transition: all .25s;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.sc-accent {
+  width: 4px; height: 48px; border-radius: 2px; flex-shrink: 0;
+}
+.sc-accent.blue   { background: #4361ee; }
+.sc-accent.green  { background: #10b981; }
+.sc-accent.red    { background: #ef4444; }
+.sc-accent.purple { background: #8b5cf6; }
+.sc-body { flex: 1; }
+.sc-num { font-size: 32px; font-weight: 700; line-height: 1.1; color: var(--text-primary); }
+.sc-label { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.sc-icon-wrap {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sc-icon-wrap.blue   { background: #eef2ff; color: #4361ee; }
+.sc-icon-wrap.green  { background: #ecfdf5; color: #10b981; }
+.sc-icon-wrap.red    { background: #fef2f2; color: #ef4444; }
+.sc-icon-wrap.purple { background: #f5f3ff; color: #8b5cf6; }
 
 /* 三列网格 */
 .triple-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .triple-card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
 .tc-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); }
 .tc-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.tc-more { font-size: 13px; color: var(--text-primary); cursor: pointer; user-select: none; white-space: nowrap; }
+.tc-more:hover { color: var(--primary); }
 .tc-body { padding: 12px 20px; min-height: 200px; }
 
 /* TOP3 行 */
@@ -194,6 +212,5 @@ onMounted(async () => {
   .triple-grid { grid-template-columns: 1fr; }
   .caro-wrap .el-carousel { height: 220px; }
   .caro-slide { height: 220px; }
-  .sc-num { font-size: 26px; }
 }
 </style>

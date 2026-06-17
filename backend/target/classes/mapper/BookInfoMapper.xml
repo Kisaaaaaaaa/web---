@@ -145,6 +145,7 @@
             category_id  = #{categoryId},
             description  = #{description},
             total_stock  = #{totalStock},
+            current_stock = #{currentStock},
             update_time  = NOW()
         WHERE id = #{id} AND is_deleted = 0
     </update>

@@ -1,0 +1,1 @@
+import{r as e}from"./_plugin-vue_export-helper-snqo9O-v.js";function o(t){return e({url:`/favorites/toggle/${t}`,method:"post"})}function a(){return e({url:"/favorites",method:"get"})}function i(t){return e({url:`/favorites/check/${t}`,method:"get"})}export{i as c,a as g,o as t};

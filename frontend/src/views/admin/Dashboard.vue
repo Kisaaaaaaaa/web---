@@ -1,23 +1,40 @@
 <template>
   <div>
-    <div class="dash-header"><h2>📊 数据仪表盘</h2><span class="dash-date">{{ today }}</span></div>
+    <div class="dash-header"><h2>数据仪表盘</h2><span class="dash-date">{{ today }}</span></div>
     <div class="stats-grid">
-      <div class="stat-card blue"><div class="sn">{{ stats.total }}</div><div class="sl">总借阅量</div></div>
-      <div class="stat-card green"><div class="sn">{{ stats.borrowing }}</div><div class="sl">借阅中</div></div>
-      <div class="stat-card red"><div class="sn">{{ stats.overdue }}</div><div class="sl">逾期未还</div></div>
-      <div class="stat-card purple"><div class="sn">{{ stats.returned }}</div><div class="sl">已归还</div></div>
+      <div class="stat-card">
+        <div class="sc-accent blue"></div>
+        <div class="sc-body"><div class="sc-num">{{ stats.total }}</div><div class="sc-label">总借阅量</div></div>
+        <div class="sc-icon-wrap blue"><el-icon :size="22"><Document /></el-icon></div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-accent green"></div>
+        <div class="sc-body"><div class="sc-num">{{ stats.borrowing }}</div><div class="sc-label">借阅中</div></div>
+        <div class="sc-icon-wrap green"><el-icon :size="22"><Notebook /></el-icon></div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-accent red"></div>
+        <div class="sc-body"><div class="sc-num">{{ stats.overdue }}</div><div class="sc-label">逾期未还</div></div>
+        <div class="sc-icon-wrap red"><el-icon :size="22"><WarningFilled /></el-icon></div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-accent purple"></div>
+        <div class="sc-body"><div class="sc-num">{{ stats.returned }}</div><div class="sc-label">已归还</div></div>
+        <div class="sc-icon-wrap purple"><el-icon :size="22"><CircleCheckFilled /></el-icon></div>
+      </div>
     </div>
     <div class="charts-grid">
-      <div class="chart-card"><div class="chart-title">📈 近7天借阅量</div><div ref="c1" style="height:290px"></div></div>
-      <div class="chart-card"><div class="chart-title">📊 热门分类借阅</div><div ref="c2" style="height:290px"></div></div>
-      <div class="chart-card"><div class="chart-title">⚠️ 逾期趋势（近7天）</div><div ref="c3" style="height:290px"></div></div>
-      <div class="chart-card"><div class="chart-title">📋 借阅状态分布</div><div ref="c4" style="height:290px"></div></div>
+      <div class="chart-card"><div class="chart-title">近7天借阅量</div><div ref="c1" style="height:290px"></div></div>
+      <div class="chart-card"><div class="chart-title">热门分类借阅</div><div ref="c2" style="height:290px"></div></div>
+      <div class="chart-card"><div class="chart-title">逾期趋势（近7天）</div><div ref="c3" style="height:290px"></div></div>
+      <div class="chart-card"><div class="chart-title">借阅状态分布</div><div ref="c4" style="height:290px"></div></div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, nextTick } from 'vue'; import * as echarts from 'echarts'
+import { Document, Notebook, WarningFilled, CircleCheckFilled } from '@element-plus/icons-vue'
 import { getBorrowStats, getStatsByCategory, getDailyStats, getStatusDistribution } from '@/api/borrow'
 
 const today = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })
@@ -74,13 +91,30 @@ onMounted(async () => {
 .dash-date { color: var(--text-muted); font-size: 14px; }
 
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
-.stat-card { border-radius: var(--radius); padding: 22px 20px; color: #fff; }
-.stat-card.blue { background: linear-gradient(135deg, #4361ee, #3a56d4); }
-.stat-card.green { background: linear-gradient(135deg, #10b981, #059669); }
-.stat-card.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
-.stat-card.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-.sn { font-size: 36px; font-weight: 700; line-height: 1.1; }
-.sl { font-size: 13px; opacity: .85; margin-top: 4px; }
+.stat-card {
+  background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 20px 24px; display: flex; align-items: center; gap: 16px;
+  transition: all .25s; cursor: default;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.sc-accent {
+  width: 4px; height: 48px; border-radius: 2px; flex-shrink: 0;
+}
+.sc-accent.blue   { background: #4361ee; }
+.sc-accent.green  { background: #10b981; }
+.sc-accent.red    { background: #ef4444; }
+.sc-accent.purple { background: #8b5cf6; }
+.sc-body { flex: 1; }
+.sc-num { font-size: 32px; font-weight: 700; line-height: 1.1; color: var(--text-primary); }
+.sc-label { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.sc-icon-wrap {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sc-icon-wrap.blue   { background: #eef2ff; color: #4361ee; }
+.sc-icon-wrap.green  { background: #ecfdf5; color: #10b981; }
+.sc-icon-wrap.red    { background: #fef2f2; color: #ef4444; }
+.sc-icon-wrap.purple { background: #f5f3ff; color: #8b5cf6; }
 
 .charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .chart-card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }

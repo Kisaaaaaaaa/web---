@@ -1,0 +1,1 @@
+import{r as e}from"./_plugin-vue_export-helper-snqo9O-v.js";function r(t){return e({url:"/fines",method:"get",params:t})}function u(t,n){return e({url:`/fines/${t}/payment`,method:"put",data:{paymentStatus:n}})}function o(){return e({url:"/fines/unpaid-total",method:"get"})}export{o as a,r as g,u};

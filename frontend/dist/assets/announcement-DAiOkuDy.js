@@ -1,1 +1,0 @@
-import{r as e}from"./_plugin-vue_export-helper-B-_C0btN.js";const s=()=>e({url:"/announcements",method:"get"}),a=()=>e({url:"/announcements/all",method:"get"}),u=n=>e({url:"/announcements",method:"post",data:n}),m=(n,t)=>e({url:`/announcements/${n}`,method:"put",data:t}),c=n=>e({url:`/announcements/${n}`,method:"delete"});export{a,u as b,c as d,s as g,m as u};

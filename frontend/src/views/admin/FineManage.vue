@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="page-hd">
-      <h2>💰 罚金管理</h2>
+      <h2>罚金管理</h2>
       <el-tag type="danger" size="large">未缴总额：¥{{ unpaidTotal }}</el-tag>
     </div>
 
@@ -41,7 +41,7 @@
 
     <!-- 罚金明细 -->
     <el-card shadow="never" class="card">
-      <template #header>📋 罚金明细</template>
+      <template #header>罚金明细</template>
       <div class="tbl-wrap">
         <el-table :data="list" v-loading="loading" stripe size="medium">
           <el-table-column label="借阅人" width="90">
